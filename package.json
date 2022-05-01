@@ -1,0 +1,21 @@
+{
+  "name": "demo-static-api",
+  "version": "1.0.0",
+  "description": "demo-static-api",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "tbd"
+  },
+  "keywords": [
+    "api"
+  ],
+  "author": "Victor Moreno",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.0"
+  }
+}
