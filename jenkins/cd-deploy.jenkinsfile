@@ -65,12 +65,19 @@ pipeline {
                                 --env-var clientSecret=$CLIENT_SECRET \
                                 --env-var anypointBaseUrl=devx \
                                 --env-var environmentName=Sandbox \
+                                --env-var gatewayVersion=1.0.0 \
+                                --env-var apiLabel=node-films-app-sandbox \
                                 --env-var assetGroupId=973647b9-74c7-4f71-8771-1b3eae192641 \
                                 --env-var assetId=node-films-app \
                                 --env-var assetSemmanticVersion=1.0.0 \
                                 --env-var assetVersion=v1 \
                                 --env-var assetType=http-api \
-                                --env-var gatewayName=my-gateway-jenkins-290422-1
+                                --env-var backendServiceUri=http://host.docker.internal:3000 \
+                                --env-var proxyUri=http://0.0.0.0:8081/api \
+                                --env-var gatewayName=my-gateway-jenkins-290422-1 \
+                                --env-var gatewayVersion=1.0.0 \
+                                --env-var username=us3r \
+                                --env-var password=p4ssw0rd \
                                 --disable-unicode \
                                 --reporters cli,json \
                                 --reporter-json-export promote-api-output.json """
