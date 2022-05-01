@@ -1,0 +1,105 @@
+#!groovy
+pipeline {
+    agent any
+    options {
+        skipDefaultCheckout true
+    }
+    environment {
+        BUILD_VERSION = "build.${currentBuild.number}"
+        CLIENT_ID = credentials('anypoint.platform.clientId')
+        CLIENT_SECRET = credentials('anypoint.platform.clientSecret')
+        ASSET_VERSION = "v1"
+    }
+    parameters {
+        string( name: 'BRANCH', choices: "dev\nmaster", description: 'Project branch' )
+        choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
+        string( name: 'Anypoint_Platform_Organization_Id', description: 'Anypoint Platform Organization Id' )
+        string( name: 'CLIENT_APP', description: 'Name of the Client Application (e.g. Jenkins-Demo-OpenID)' )
+    }
+    stages{
+        stage("Install") {
+            steps {
+                sh "npm install"
+            }
+        }
+        stage('Checkout Release') {
+            steps {
+                script {
+                    def githubUrl = scm.userRemoteConfigs[0].url
+                    print "GitHub URL: " + githubUrl
+                    echo "Checking out Release from GitHub..."
+                    checkout([$class: 'GitSCM', 
+                            branches: [[name: "${params.BRANCH}"]], 
+                            doGenerateSubmoduleConfigurations: false, 
+                            extensions: [], 
+                            submoduleCfg: [], 
+                            userRemoteConfigs: [[url: "${githubUrl}"]]])
+                    }
+                echo "Checkout Release completed: ${currentBuild.currentResult}"
+            }
+            post {
+                success {
+                    echo "...Checkout Succeeded for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                } 
+                failure {
+                    echo "...Checkout Failed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                }
+            }
+        }
+        stage('Downloading Anypoint Flex Gateway Image') {
+            steps {
+                script {
+                    echo "Downloading Anypoint Flex Gateway Image"
+                    sh """ docker pull mulesoft/flex-gateway:latest """
+                }
+            }    
+            post {
+                success {
+                    echo "...Download of Anypoint Flex Gateway Image succeded for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                } 
+                failure {
+                    echo "...Download of Anypoint Flex Gateway Image failed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                }
+            }
+        }
+        stage('Registering Anypoint Flex Gateway') {
+            steps {
+                script {
+                    echo "Registering Anypoint Flex Gateway"
+                    sh """docker run --entrypoint flexctl -w /registration -v "$(pwd)":/registration mulesoft/flex-gateway:1.0.0-beta.15 \
+                        register \
+                        --client-id=$CLIENT_ID \
+                        --client-secret=$CLIENT_SECRET \
+                        --environment=efebadc2-55bf-4246-bc40-f0385faf60f1 \
+                        --connected=true \
+                        --organization=${params.Anypoint_Platform_Organization_Id} \
+                        --anypoint-url=https://devx.anypoint.mulesoft.com \
+                        my-flex-gateway-node """   
+                }
+            }    
+            post {
+                success {
+                    echo "...Registration of Anypoint Flex Gateway succeed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                } 
+                failure {
+                    echo "...Registration of Anypoint Flex Gateway failed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                }
+            }
+        }
+        stage('Initializing Anypoint Flex Gateway') {
+            steps {
+                script {
+                    echo "Initializing Anypoint Flex Gateway"
+                    sh """ls """   
+                }
+            }    
+            post {
+                success {
+                    echo "...Initialization of Anypoint Flex Gateway succeed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                } 
+                failure {
+                    echo "...Initalization of Anypoint Flex Gateway failed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
+                }
+            }
+        }
+}  

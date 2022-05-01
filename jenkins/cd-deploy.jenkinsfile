@@ -8,11 +8,10 @@ pipeline {
         BUILD_VERSION = "build.${currentBuild.number}"
         CLIENT_ID = credentials('anypoint.platform.clientId')
         CLIENT_SECRET = credentials('anypoint.platform.clientSecret')
-        // ANYPOINT_PLATFORM_CREDS = credentials('anypoint.platform.account')
         ASSET_VERSION = "v1"
     }
     parameters {
-        string( name: 'RELEASE_VERSION', description: 'Release Version to be deployed (e.g. 1.0.0)' )
+        string( name: 'BRANCH', choices: "dev\nmaster", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
         choice( name: 'ASSET_TYPE', choices: "API\nIntegration", description: 'Type of  Mule Application (e.g. API or Integration)' )
         string( name: 'API_VERSION', defaultValue: '1.0', description: 'Version of API Instance for pairing with Mule Application (e.g. 1.0)' )
@@ -31,11 +30,11 @@ pipeline {
                     print "GitHub URL: " + githubUrl
                     echo "Checking out Release from GitHub..."
                     checkout([$class: 'GitSCM', 
-                            branches: [[name: "${params.RELEASE_VERSION}"]], 
+                            branches: [[name: "${params.BRANCH}"]], 
                             doGenerateSubmoduleConfigurations: false, 
                             extensions: [], 
                             submoduleCfg: [], 
-                            userRemoteConfigs: [[credentialsId: "mule.github.id", url: "${githubUrl}"]]])
+                            userRemoteConfigs: [[ url: "${githubUrl}"]]])
                     }
                 echo "Checkout Release completed: ${currentBuild.currentResult}"
             }
@@ -65,7 +64,7 @@ pipeline {
                                 --env-var clientSecret=$CLIENT_SECRET \
                                 --env-var url=https://devx.anypoint.mulesoft.com/accounts/api/v2/oauth2/token \
                                 --env-var anypointBaseUrl=devx \
-                                --env-var environmentName=Sandbox \
+                                --env-var environmentName="${params.ENVIRONMENT}" \
                                 --env-var gatewayVersion=1.0.0 \
                                 --env-var apiLabel=node-films-app-sandbox \
                                 --env-var assetGroupId=973647b9-74c7-4f71-8771-1b3eae192641 \
