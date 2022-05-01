@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     echo "Registering Anypoint Flex Gateway"
-                    sh """docker run --entrypoint flexctl -w /registration -v "\$(pwd)":/registration mulesoft/flex-gateway:1.0.0-beta.15 \
+                    sh """docker run --entrypoint flexctl -w /registration -v "\$(pwd)":/registration mulesoft/flex-gateway:latest \
                         register \
                         --client-id=$CLIENT_ID \
                         --client-secret=$CLIENT_SECRET \
