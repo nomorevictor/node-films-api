@@ -85,7 +85,7 @@ pipeline {
             when {
                 expression { params.ENVIRONMENT == 'Sandbox' }
             }
-            steps 
+            steps {
                 script {
                     echo "Deploying to Docker Container"
                     sh """ npm install """
@@ -117,5 +117,5 @@ pipeline {
             echo "Pipeline result: ${currentBuild.result}"
             echo "Pipeline currentResult: ${currentBuild.currentResult}"
         }
-    }  
-}
+    }
+}  
