@@ -19,6 +19,11 @@ pipeline {
         string( name: 'CLIENT_APP', description: 'Name of the Client Application (e.g. Jenkins-Demo-OpenID)' )
     }
     stages{
+        stage("Install") {
+            steps {
+                sh "npm install"
+            }
+        }
         stage('Checkout Release') {
             steps {
                 script {
@@ -88,8 +93,6 @@ pipeline {
             steps {
                 script {
                     echo "Deploying to Docker Container"
-                    sh """ npm install """
-                    echo "Installing node dependencies"
                     sh """docker build -t node-app-container:latest . """
                     echo "Building new Docker Image based on Dockerfile"
                     sh """docker run --name node-app-${BUILD_NUMBER} --publish 0.0.0.0:3000:3000 --detach node-app-container:latest"""
