@@ -11,7 +11,7 @@ pipeline {
         ASSET_VERSION = "v1"
     }
     parameters {
-        choice( name: 'BRANCH', choices: "dev\nmaster", description: 'Project branch' )
+        choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
         choice( name: 'ASSET_TYPE', choices: "API\nIntegration", description: 'Type of  Mule Application (e.g. API or Integration)' )
         string( name: 'API_VERSION', defaultValue: '1.0', description: 'Version of API Instance for pairing with Mule Application (e.g. 1.0)' )

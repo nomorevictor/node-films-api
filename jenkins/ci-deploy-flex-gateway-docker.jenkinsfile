@@ -11,7 +11,7 @@ pipeline {
         ASSET_VERSION = "v1"
     }
     parameters {
-        choice( name: 'BRANCH', choices: "dev\nmaster", description: 'Project branch' )
+        choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
         string( name: 'Anypoint_Platform_Organization_Id', description: 'Anypoint Platform Organization Id' )
         string( name: 'CLIENT_APP', description: 'Name of the Client Application (e.g. Jenkins-Demo-OpenID)' )
@@ -102,4 +102,17 @@ pipeline {
                 }
             }
         }
+    }
+    post {
+        success {
+            echo "All Good: ${env.RELEASE_VERSION}: ${currentBuild.currentResult}"    
+        }
+        failure {
+            echo "Not So Good: ${env.RELEASE_VERSION}: ${currentBuild.currentResult}"
+        }         
+        always {
+            echo "Pipeline result: ${currentBuild.result}"
+            echo "Pipeline currentResult: ${currentBuild.currentResult}"
+        }
+    }
 }  
