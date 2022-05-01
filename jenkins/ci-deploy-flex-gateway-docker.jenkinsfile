@@ -17,11 +17,6 @@ pipeline {
         string( name: 'CLIENT_APP', description: 'Name of the Client Application (e.g. Jenkins-Demo-OpenID)' )
     }
     stages{
-        stage("Install") {
-            steps {
-                sh "npm install"
-            }
-        }
         stage('Checkout Release') {
             steps {
                 script {
@@ -33,17 +28,14 @@ pipeline {
                             doGenerateSubmoduleConfigurations: false, 
                             extensions: [], 
                             submoduleCfg: [], 
-                            userRemoteConfigs: [[url: "${githubUrl}"]]])
+                            userRemoteConfigs: [[ url: "${githubUrl}"]]])
                     }
                 echo "Checkout Release completed: ${currentBuild.currentResult}"
             }
-            post {
-                success {
-                    echo "...Checkout Succeeded for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
-                } 
-                failure {
-                    echo "...Checkout Failed for ${env.BUILD_VERSION}: ${currentBuild.currentResult}"
-                }
+        }
+        stage("Install dependencies") {
+            steps {
+                sh "npm install"
             }
         }
         stage('Downloading Anypoint Flex Gateway Image') {
