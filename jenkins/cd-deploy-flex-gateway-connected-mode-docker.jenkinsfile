@@ -32,12 +32,6 @@ pipeline {
                 echo "Checkout Release completed: ${currentBuild.currentResult}"
             }
         }
-        stage("Initialializig environment") {
-            steps {
-                
-                if ${env.ENVIRONMENT = "Sandbox"} def environmentId = credentials('anypoint.platform.sandbox.id') else if ${env.ENVIRONMENT = "Sandbox"} def environmentId = credentials('anypoint.platform.production.id')
-            }
-        }
         stage("Install dependencies") {
             steps {
                 sh "npm install"
