@@ -8,14 +8,12 @@ pipeline {
         BUILD_VERSION = "build.${currentBuild.number}"
         CLIENT_ID = credentials('anypoint.platform.clientId')
         CLIENT_SECRET = credentials('anypoint.platform.clientSecret')
-        ASSET_VERSION = "v1"
     }
     parameters {
         choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
-        choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
+        choice( name: 'ENVIRONMENT', choices: "sandbox\nproduction", description: 'Environment where Anypoint Flex Gateway will be deployed' )
         choice( name: 'ASSET_TYPE', choices: "API\nIntegration", description: 'Type of  Mule Application (e.g. API or Integration)' )
         string( name: 'API_VERSION', defaultValue: '1.0', description: 'Version of API Instance for pairing with Mule Application (e.g. 1.0)' )
-        string( name: 'CLIENT_APP', description: 'Name of the Client Application (e.g. Jenkins-Demo-OpenID)' )
     }
     stages{
         stage('Checkout Release') {
@@ -40,17 +38,9 @@ pipeline {
             }
         }
         stage('Register API Instance in Flex Gateway') {
-            when {
-                expression { params.ENVIRONMENT == 'Sandbox' }
-                expression { params.ASSET_TYPE == 'API' }
-            }
             steps {
                 script {
                     echo "Registering API Instance in Flex Gateway and Applying Policies"
-                    // def pom = readMavenPom file: 'pom.xml'
-                    // print "POM Name: " + pom.name
-                    // print "POM artifactId: " + pom.artifactId
-                    // print "Mule Runtime: " + pom.properties['app.runtime']
                     sh """ newman run postman/FWG-Connected-Mode-CD-Newman.postman_collection.json \
                                 --env-var clientId=$CLIENT_ID \
                                 --env-var clientSecret=$CLIENT_SECRET \
@@ -86,9 +76,6 @@ pipeline {
             }
         }
         stage('Deploy to Docker Container') {
-            when {
-                expression { params.ENVIRONMENT == 'Sandbox' }
-            }
             steps {
                 script {
                     echo "Deploying to Docker Container"
