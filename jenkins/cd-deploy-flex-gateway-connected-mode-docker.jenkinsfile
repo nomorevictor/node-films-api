@@ -67,7 +67,7 @@ pipeline {
                             --environment=${environmentId} \
                             --connected=true \
                             --organization=${env.ANYPOINT_PLATFORM_ORG_ID} \
-                            --anypoint-url=https://devx.anypoint.mulesoft.com \
+                            --anypoint-url=https://stgx.anypoint.mulesoft.com \
                             ${params.FLEX_GATEWAY_NAME}"""   
                     }
                 }
