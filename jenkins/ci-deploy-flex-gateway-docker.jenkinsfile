@@ -82,7 +82,9 @@ pipeline {
             steps {
                 script {
                     echo "Retrieving Anypoint Flex Gateway registration Id"
-                    sh """fwg_id_path=\$(find . -type f -name "*.key") ; fwg_id=\$(basename "\$fwg_id_path" ".key"); echo "Starting Anypoint Flex Gateway" ; docker run --rm \
+                    sh """fwg_id_path=\$(find . -type f -name "*.key") ; fwg_id=\$(basename "\$fwg_id_path" ".key"); echo "Starting Anypoint Flex Gateway" ;
+                        docker run --rm \
+                        --name flex-gateway-${BUILD_NUMBER} \
                         -v "\$(pwd)":/etc/flex-gateway/rtm \
                         -p 8081:8081 \
                         -e FLEX_RTM_ARM_AGENT_CONFIG=/etc/flex-gateway/rtm/"\$fwg_id".conf \
