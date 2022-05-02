@@ -374,10 +374,10 @@
 					}
 				},
 				"url": {
-					"raw": "https://devx.anypoint.mulesoft.com/apimanager/api/v1/organizations/{{organizationId}}/environments/{{environmentId}}/apis/{{apiId}}/policies",
+					"raw": "https://{{anypointBaseUrl}}.anypoint.mulesoft.com/apimanager/api/v1/organizations/{{organizationId}}/environments/{{environmentId}}/apis/{{apiId}}/policies",
 					"protocol": "https",
 					"host": [
-						"devx",
+						"{{anypointBaseUrl}}",
 						"anypoint",
 						"mulesoft",
 						"com"
