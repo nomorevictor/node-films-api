@@ -13,7 +13,7 @@ pipeline {
     }
     parameters {
         choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
-        choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
+        choice( name: 'ENVIRONMENT', choices: "sandbox\nproduction", description: 'Environment where Mule Application will be deployed' )
     }
     stages{
         stage('Checkout Release') {
