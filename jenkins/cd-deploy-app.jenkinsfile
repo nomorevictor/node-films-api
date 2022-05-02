@@ -53,7 +53,7 @@ pipeline {
                                 --env-var gatewayVersion=1.0.0 \
                                 --env-var apiLabel=node-films-app-sandbox \
                                 --env-var assetGroupId=$ANYPOINT_PLATFORM_ORG_ID \
-                                --env-var assetId=node-films-app \
+                                --env-var assetId=node-films-api-test \
                                 --env-var assetSemmanticVersion=1.0.0 \
                                 --env-var assetVersion=v1 \
                                 --env-var assetType=http-api \
