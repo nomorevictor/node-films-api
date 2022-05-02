@@ -9,12 +9,11 @@ pipeline {
         CLIENT_ID = credentials('anypoint.platform.clientId')
         CLIENT_SECRET = credentials('anypoint.platform.clientSecret')
         ASSET_VERSION = "v1"
+        ANYPOINT_PLATFORM_ORG_ID = credentials('anypoint.platform.org.id')
     }
     parameters {
         choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "Sandbox\nProduction", description: 'Environment where Mule Application will be deployed' )
-        string( name: 'Anypoint_Platform_Organization_Id', description: 'Anypoint Platform Organization Id' )
-        string( name: 'CLIENT_APP', description: 'Name of the Client Application (e.g. Jenkins-Demo-OpenID)' )
     }
     stages{
         stage('Checkout Release') {
@@ -33,6 +32,11 @@ pipeline {
                 echo "Checkout Release completed: ${currentBuild.currentResult}"
             }
         }
+        stage("Initialializig environment") {
+            steps {
+                if ${env.ENVIRONMENT = "Sandbox"} def environmentId = credentials('anypoint.platform.sandbox.id') else if ${env.ENVIRONMENT = "Sandbox"} def environmentId = credentials('anypoint.platform.production.id')
+            }
+        }
         stage("Install dependencies") {
             steps {
                 sh "npm install"
@@ -41,8 +45,8 @@ pipeline {
         stage('Downloading Anypoint Flex Gateway Image') {
             steps {
                 script {
-                    echo "Downloading Anypoint Flex Gateway Image"
-                    sh """ docker pull mulesoft/flex-gateway:latest """
+                    sh """echo "Downloading Anypoint Flex Gateway Image";
+                    docker pull mulesoft/flex-gateway:latest"""
                 }
             }    
             post {
@@ -57,16 +61,16 @@ pipeline {
         stage('Registering Anypoint Flex Gateway') {
             steps {
                 script {
-                    echo "Registering Anypoint Flex Gateway"
-                    sh """docker run --entrypoint flexctl -w /registration -v "\$(pwd)":/registration mulesoft/flex-gateway:latest \
+                    sh """echo "Registering Anypoint Flex Gateway";
+                        docker run --entrypoint flexctl -w /registration -v "\$(pwd)":/registration mulesoft/flex-gateway:latest \
                         register \
                         --client-id=$CLIENT_ID \
                         --client-secret=$CLIENT_SECRET \
-                        --environment=efebadc2-55bf-4246-bc40-f0385faf60f1 \
+                        --environment=${environmentId} \
                         --connected=true \
-                        --organization=${params.Anypoint_Platform_Organization_Id} \
+                        --organization=${env.ANYPOINT_PLATFORM_ORG_ID} \
                         --anypoint-url=https://devx.anypoint.mulesoft.com \
-                        my-flex-gateway-nodeapp """   
+                        my-flex-gateway-for-node-apps"""   
                 }
             }    
             post {
@@ -81,8 +85,10 @@ pipeline {
         stage('Initializing Anypoint Flex Gateway') {
             steps {
                 script {
-                    echo "Retrieving Anypoint Flex Gateway registration Id"
-                    sh """fwg_id_path=\$(find . -type f -name "*.key") ; fwg_id=\$(basename "\$fwg_id_path" ".key"); echo "Starting Anypoint Flex Gateway" ;
+                    sh """echo Retrieving Anypoint Flex Gateway registration Id;
+                        fwg_id_path=\$(find . -type f -name "*.key");
+                        fwg_id=\$(basename "\$fwg_id_path" ".key");
+                        echo "Starting Anypoint Flex Gateway";
                         docker run --rm \
                         --name flex-gateway-${BUILD_NUMBER} \
                         -v "\$(pwd)":/etc/flex-gateway/rtm \
@@ -90,7 +96,7 @@ pipeline {
                         -e FLEX_RTM_ARM_AGENT_CONFIG=/etc/flex-gateway/rtm/"\$fwg_id".conf \
                         -e FLEX_NAME=node01 \
                         --detach \
-                        mulesoft/flex-gateway:latest """  
+                        mulesoft/flex-gateway:latest"""  
                 }
             }    
             post {
