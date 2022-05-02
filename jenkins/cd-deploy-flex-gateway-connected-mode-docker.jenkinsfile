@@ -34,6 +34,7 @@ pipeline {
         }
         stage("Initialializig environment") {
             steps {
+                
                 if ${env.ENVIRONMENT = "Sandbox"} def environmentId = credentials('anypoint.platform.sandbox.id') else if ${env.ENVIRONMENT = "Sandbox"} def environmentId = credentials('anypoint.platform.production.id')
             }
         }
@@ -60,6 +61,7 @@ pipeline {
         }
         stage('Registering Anypoint Flex Gateway') {
             steps {
+               withCredentials([string(credentialsId: "anypoint.platform.${params.ENVIRONMENT}.id", variable: 'environmentId']){
                 script {
                     sh """echo "Registering Anypoint Flex Gateway";
                         docker run --entrypoint flexctl -w /registration -v "\$(pwd)":/registration mulesoft/flex-gateway:latest \
@@ -72,6 +74,7 @@ pipeline {
                         --anypoint-url=https://devx.anypoint.mulesoft.com \
                         my-flex-gateway-for-node-apps"""   
                 }
+                                 }
             }    
             post {
                 success {
