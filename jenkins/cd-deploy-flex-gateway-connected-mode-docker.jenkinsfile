@@ -85,14 +85,14 @@ pipeline {
             steps {
                 script {
                     sh """echo Retrieving Anypoint Flex Gateway registration Id;
-                        fwg_id_path=\$(find . -type f -name "*.key");
-                        fwg_id=\$(basename "\$fwg_id_path" ".key");
+                        fgw_id_path=\$(find . -type f -name "*.key");
+                        fgw_id=\$(basename "\$fgw_id_path" ".key");
                         echo "Starting Anypoint Flex Gateway";
                         docker run --rm \
                         --name ${params.FLEX_GATEWAY_NAME} \
                         -v "\$(pwd)":/etc/flex-gateway/rtm \
                         -p ${params.DOCKER_FORWARDING_PORT} \
-                        -e FLEX_RTM_ARM_AGENT_CONFIG=/etc/flex-gateway/rtm/"\$fwg_id".conf \
+                        -e FLEX_RTM_ARM_AGENT_CONFIG=/etc/flex-gateway/rtm/"\$fgw_id".conf \
                         -e FLEX_NAME=${params.FLEX_GATEWAY_NODE_NAME} \
                         --detach \
                         mulesoft/flex-gateway:latest"""  
