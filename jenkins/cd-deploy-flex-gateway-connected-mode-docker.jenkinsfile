@@ -11,7 +11,7 @@ pipeline {
         ANYPOINT_PLATFORM_ORG_ID = credentials('anypoint.platform.org.id')
     }
     parameters {
-        choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
+        choice( name: 'BRANCH', choices: "dev\nmaster", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "sandbox\nproduction", description: 'Environment where Anypoint Flex Gateway will be deployed' )
         string( name: 'FLEX_GATEWAY_NAME', defaultValue: 'anypoint-flex-gateway', description: 'Name for the Anypoint Flex Gateway (Default: anypoint-flex-gateway)' )
         string( name: 'DOCKER_FORWARDING_PORT', defaultValue: '8081:8081', description: 'Port where Anypoint Flex Gateway Docker containerwill listen/forward traffic (Default: 8081:8081)' )

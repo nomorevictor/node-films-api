@@ -11,7 +11,7 @@ pipeline {
         ANYPOINT_PLATFORM_ORG_ID = credentials('anypoint.platform.org.id')
     }
     parameters {
-        choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
+        choice( name: 'BRANCH', choices: "dev\nmaster", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "sandbox\nproduction", description: 'Environment where API Instance will be deployed' )
         string( name: 'FLEX_GATEWAY_NAME', defaultValue: 'anypoint-flex-gateway', description: 'Name for the Anypoint Flex Gateway (Default: anypoint-flex-gateway)' )
         string( name: 'MICRO_SERVICE_URI', defaultValue: 'http://host.docker.internal:3000', description: 'URI for the Micro Service to be managed by Anypoint Flex Gateway (Default: http://host.docker.internal:3000)' )
