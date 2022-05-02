@@ -8,10 +8,15 @@ pipeline {
         BUILD_VERSION = "build.${currentBuild.number}"
         CLIENT_ID = credentials('anypoint.platform.clientId')
         CLIENT_SECRET = credentials('anypoint.platform.clientSecret')
+        ANYPOINT_PLATFORM_ORG_ID = credentials('anypoint.platform.org.id')
     }
     parameters {
         choice( name: 'BRANCH', choices: "master\ndev", description: 'Project branch' )
         choice( name: 'ENVIRONMENT', choices: "sandbox\nproduction", description: 'Environment where API Instance will be deployed' )
+        string( name: 'FLEX_GATEWAY_NAME', defaultValue: 'anypoint-flex-gateway', description: 'Name for the Anypoint Flex Gateway (Default: anypoint-flex-gateway)' )
+        string( name: 'MICRO_SERVICE_URI', defaultValue: 'http://host.docker.internal:3000', description: 'URI for the Micro Service to be managed by Anypoint Flex Gateway (Default: http://host.docker.internal:3000)' )
+        string( name: 'PROXY_URI', defaultValue: 'http://0.0.0.0:8081/api', description: 'URI that will expose the Micro Service managed by by Anypoint Flex Gateway (Default: http://0.0.0.0:8081/api)' )
+
     }
     stages{
         stage('Checkout Release') {
@@ -47,14 +52,14 @@ pipeline {
                                 --env-var environmentName="${params.ENVIRONMENT}" \
                                 --env-var gatewayVersion=1.0.0 \
                                 --env-var apiLabel=node-films-app-sandbox \
-                                --env-var assetGroupId=973647b9-74c7-4f71-8771-1b3eae192641 \
+                                --env-var assetGroupId=$ANYPOINT_PLATFORM_ORG_ID \
                                 --env-var assetId=node-films-app \
                                 --env-var assetSemmanticVersion=1.0.0 \
                                 --env-var assetVersion=v1 \
                                 --env-var assetType=http-api \
-                                --env-var backendServiceUri=http://host.docker.internal:3000 \
-                                --env-var proxyUri=http://0.0.0.0:8081/api \
-                                --env-var gatewayName=anypoint-flex-gateway-mstest \
+                                --env-var backendServiceUri="${params.MICRO_SERVICE_URI}" \ 
+                                --env-var proxyUri="${params.PROXY_URI}" \
+                                --env-var gatewayName="${params.FLEX_GATEWAY_NAME}" \
                                 --env-var gatewayVersion=1.0.0 \
                                 --env-var username=us3r \
                                 --env-var password=p4ssw0rd \
