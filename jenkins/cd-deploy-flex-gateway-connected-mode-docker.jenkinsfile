@@ -55,7 +55,7 @@ pipeline {
         }
         stage('Registering Anypoint Flex Gateway') {
             steps {
-               withCredentials([string(credentialsId: "anypoint.platform.${params.ENVIRONMENT}.id", variable: 'environmentId']){
+               withCredentials([string(credentialsId: "anypoint.platform.${params.ENVIRONMENT}.id", variable: 'environmentId')]){
                 script {
                     sh """echo "Registering Anypoint Flex Gateway";
                         docker run --entrypoint flexctl -w /registration -v "\$(pwd)":/registration mulesoft/flex-gateway:latest \
