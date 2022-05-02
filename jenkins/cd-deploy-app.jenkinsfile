@@ -56,7 +56,7 @@ pipeline {
                                 --env-var assetType=http-api \
                                 --env-var backendServiceUri=http://host.docker.internal:3000 \
                                 --env-var proxyUri=http://0.0.0.0:8081/api \
-                                --env-var gatewayName=my-gateway-jenkins-290422-1 \
+                                --env-var gatewayName=anypoint-flex-gateway \
                                 --env-var gatewayVersion=1.0.0 \
                                 --env-var username=us3r \
                                 --env-var password=p4ssw0rd \
